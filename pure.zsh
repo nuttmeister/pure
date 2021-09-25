@@ -222,6 +222,11 @@ prompt_pure_precmd() {
 		export VIRTUAL_ENV_DISABLE_PROMPT=12
 	fi
 
+	if [[ -n $AWS_VAULT ]]; then
+		psvar[12]="aws:${AWS_VAULT:t}"
+		export VIRTUAL_ENV_DISABLE_PROMPT=12
+	fi
+
 	# Nix package manager integration. If used from within 'nix shell' - shell name is shown like so:
 	# ~/Projects/flake-utils-plus master
 	# flake-utils-plus ❯
@@ -812,7 +817,7 @@ prompt_pure_setup() {
 		prompt:continuation  242
 		user                 242
 		user:root            default
-		virtualenv           242
+		virtualenv           cyan
 	)
 	prompt_pure_colors=("${(@kv)prompt_pure_colors_default}")
 
