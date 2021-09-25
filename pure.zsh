@@ -223,7 +223,10 @@ prompt_pure_precmd() {
 	fi
 
 	if [[ -n $AWS_VAULT ]]; then
-		psvar[12]="aws:${AWS_VAULT:t}"
+		EXPIRY=$(TZ=UTC date -j -f "%Y-%m-%dT%H:%M:%SZ" "$AWS_SESSION_EXPIRATION" +%s)
+		EXPIRES=$(($EXPIRY-$(TZ=UTC date +%s)))
+		EXPIRES_FORMAT=$(TZ=UTC date -j -f "%s" $EXPIRES +%-Hh%-Mm)
+		psvar[12]="aws:${AWS_VAULT:t}(${EXPIRES_FORMAT:t})"
 		export VIRTUAL_ENV_DISABLE_PROMPT=12
 	fi
 
