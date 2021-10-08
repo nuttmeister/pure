@@ -225,7 +225,7 @@ prompt_pure_precmd() {
 	if [[ -n $AWS_VAULT ]]; then
 		EXPIRY=$(TZ=UTC date -j -f "%Y-%m-%dT%H:%M:%SZ" "$AWS_SESSION_EXPIRATION" +%s)
 		EXPIRES=$(($EXPIRY-$(TZ=UTC date +%s)))
-		if [[ "${EXPIRES}" -le "300" ]]; then
+		if [[ "${EXPIRES}" -le "1200" ]]; then
 			if [[ "${EXPIRES}" -le "0" ]]; then
 				echo "${AWS_VAULT} session expired! resetting aws"
 			else
