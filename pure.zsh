@@ -225,9 +225,22 @@ prompt_pure_precmd() {
 	if [[ -n $AWS_VAULT ]]; then
 		EXPIRY=$(TZ=UTC date -j -f "%Y-%m-%dT%H:%M:%SZ" "$AWS_SESSION_EXPIRATION" +%s)
 		EXPIRES=$(($EXPIRY-$(TZ=UTC date +%s)))
-		EXPIRES_FORMAT=$(TZ=UTC date -j -f "%s" $EXPIRES +%-Hh%-Mm)
-		psvar[12]="aws:${AWS_VAULT:t}(${EXPIRES_FORMAT:t})"
-		export VIRTUAL_ENV_DISABLE_PROMPT=12
+		if [[ "${EXPIRES}" -le "300" ]]; then
+			if [[ "${EXPIRES}" -le "0" ]]; then
+				echo "${AWS_VAULT} session expired! resetting aws"
+			else
+				echo "${AWS_VAULT} session expires in less than 5m. resettings aws"
+			fi
+			unset AWS_VAULT_CURRENT_PROFILE AWS_VAULT AWS_DEFAULT_REGION AWS_REGION
+			unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_SESSION_EXPIRATION
+			unset VIRTUAL_ENV_DISABLE_PROMPT
+		fi
+
+		if [[ -n $AWS_VAULT ]]; then
+			EXPIRES_FORMAT=$(TZ=UTC date -j -f "%s" $EXPIRES +%-Hh%-Mm)
+			psvar[12]="aws:${AWS_VAULT:t}(${EXPIRES_FORMAT:t})"
+			export VIRTUAL_ENV_DISABLE_PROMPT=12
+		fi
 	fi
 
 	# Nix package manager integration. If used from within 'nix shell' - shell name is shown like so:
