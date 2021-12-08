@@ -222,6 +222,13 @@ prompt_pure_precmd() {
 		export VIRTUAL_ENV_DISABLE_PROMPT=12
 	fi
 
+	PS12=""
+
+	KUBE_CONTEXT=$(kubectx --current)
+	if [[ -n $KUBE_CONTEXT ]]; then
+		PS12="ctx:${KUBE_CONTEXT}"
+	fi
+
 	if [[ -n $AWS_VAULT ]]; then
 		EXPIRY=$(TZ=UTC date -j -f "%Y-%m-%dT%H:%M:%SZ" "$AWS_SESSION_EXPIRATION" +%s)
 		EXPIRES=$(($EXPIRY-$(TZ=UTC date +%s)))
@@ -238,9 +245,19 @@ prompt_pure_precmd() {
 
 		if [[ -n $AWS_VAULT ]]; then
 			EXPIRES_FORMAT=$(TZ=UTC date -j -f "%s" $EXPIRES +%-Hh%-Mm)
-			psvar[12]="aws:${AWS_VAULT:t}(${EXPIRES_FORMAT:t})"
-			export VIRTUAL_ENV_DISABLE_PROMPT=12
+			AWS_PS12="aws:${AWS_VAULT:t}(${EXPIRES_FORMAT:t})"
+
+			if [[ -n $PS12 ]]; then
+				PS12="${PS12}|${AWS_PS12}"
+			else
+				PS12="${AWS_PS12}"
+			fi
 		fi
+	fi
+
+	if [[ -n $PS12 ]]; then
+		psvar[12]="${PS12:t}"
+		export VIRTUAL_ENV_DISABLE_PROMPT=12
 	fi
 
 	# Nix package manager integration. If used from within 'nix shell' - shell name is shown like so:
