@@ -230,7 +230,7 @@ prompt_pure_precmd() {
 	fi
 
 	if [[ -n $AWS_VAULT ]]; then
-		EXPIRY=$(TZ=UTC date -j -f "%Y-%m-%dT%H:%M:%SZ" "$AWS_SESSION_EXPIRATION" +%s)
+		EXPIRY=$(TZ=UTC date -j -f "%Y-%m-%dT%H:%M:%SZ" "$AWS_CREDENTIAL_EXPIRATION" +%s)
 		EXPIRES=$(($EXPIRY-$(TZ=UTC date +%s)))
 		if [[ "${EXPIRES}" -le "300" ]]; then
 			if [[ "${EXPIRES}" -le "0" ]]; then
@@ -239,7 +239,7 @@ prompt_pure_precmd() {
 				echo "${AWS_VAULT} session expires in less than 5m. resettings aws"
 			fi
 			unset AWS_VAULT_CURRENT_PROFILE AWS_VAULT AWS_DEFAULT_REGION AWS_REGION
-			unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_SESSION_EXPIRATION
+			unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_CREDENTIAL_EXPIRATION
 			unset VIRTUAL_ENV_DISABLE_PROMPT
 		fi
 
