@@ -224,10 +224,10 @@ prompt_pure_precmd() {
 
 	PS12=""
 
-	KUBE_CONTEXT=$(kubectx --current)
-	if [[ -n $KUBE_CONTEXT ]]; then
-		PS12="ctx:${KUBE_CONTEXT}"
-	fi
+	# KUBE_CONTEXT=$(kubectx --current)
+	# if [[ -n $KUBE_CONTEXT ]]; then
+	# 	PS12="ctx:${KUBE_CONTEXT}"
+	# fi
 
 	if [[ -n $AWS_VAULT ]]; then
 		EXPIRY=$(TZ=UTC date -j -f "%Y-%m-%dT%H:%M:%SZ" "$AWS_CREDENTIAL_EXPIRATION" +%s)
