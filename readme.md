@@ -4,50 +4,6 @@
 
 <img src="screenshot.png" width="864">
 
-<br>
-
----
-
-<div align="center">
-	<p>
-		<p>
-			<sup>
-				<a href="https://github.com/sponsors/sindresorhus">Sindre Sorhus' open source work is supported by the community</a>
-			</sup>
-		</p>
-		<sup>Special thanks to:</sup>
-		<br>
-		<br>
-		<br>
-		<a href="https://standardresume.co/tech">
-			<img src="https://sindresorhus.com/assets/thanks/standard-resume-logo.svg" width="200"/>
-		</a>
-		<br>
-		<br>
-		<br>
-		<a href="https://www.gitpod.io/?utm_campaign=sindresorhus&utm_medium=referral&utm_content=awesome&utm_source=github">
-			<div>
-				<img src="https://sindresorhus.com/assets/thanks/gitpod-logo-white-bg.svg" width="240" alt="Gitpod">
-			</div>
-			<b>Dev environments built for the cloud</b>
-			<div>
-				<sub>
-				Natively integrated with GitLab, GitHub, and Bitbucket, Gitpod automatically and continuously prebuilds dev
-				<br>
-				environments for all your branches. As a result team members can instantly start coding with fresh dev environments
-				<br>
-				for each new task - no matter if you are building a new feature, want to fix a bug, or work on a code review.
-				</sub>
-			</div>
-		</a>
-		<br>
-	</p>
-</div>
-
----
-
-<br>
-
 ## Overview
 
 Most prompts are cluttered, ugly and slow. We wanted something visually pleasing that stayed out of our way.
@@ -67,7 +23,7 @@ Most prompts are cluttered, ugly and slow. We wanted something visually pleasing
 
 ## Install
 
-Can be installed with `npm` or manually. Requires Git 2.15.2+ and ZSH 5.2+. Older versions of ZSH are known to work, but they are **not** recommended.
+Can be installed with `npm` (not `yarn`) or manually. Requires Git 2.15.2+ and ZSH 5.2+. Older versions of ZSH are known to work, but they are **not** recommended.
 
 ### npm
 
@@ -83,6 +39,12 @@ That's it. Skip to [Getting started](#getting-started).
 brew install pure
 ```
 
+If you're not using ZSH from Homebrew (`brew install zsh` and `$(brew --prefix)/bin/zsh`), you must also add the site-functions to your `fpath` in `$HOME/.zshrc`:
+
+```sh
+fpath+=("$(brew --prefix)/share/zsh/site-functions")
+```
+
 ### Manually
 
 1. Clone this repo somewhere. Here we'll use `$HOME/.zsh/pure`.
@@ -95,7 +57,7 @@ git clone https://github.com/sindresorhus/pure.git "$HOME/.zsh/pure"
 2. Add the path of the cloned repo to `$fpath` in `$HOME/.zshrc`.
 ```sh
 # .zshrc
-fpath+=$HOME/.zsh/pure
+fpath+=($HOME/.zsh/pure)
 ```
 
 ## Getting started
@@ -113,11 +75,12 @@ prompt pure
 | Option                           | Description                                                                                    | Default value  |
 | :------------------------------- | :--------------------------------------------------------------------------------------------- | :------------- |
 | **`PURE_CMD_MAX_EXEC_TIME`**     | The max execution time of a process before its run time is shown when it exits.                | `5` seconds    |
-| **`PURE_GIT_PULL=0`**            | Prevents Pure from checking whether the current Git remote has been updated.                   |                |
-| **`PURE_GIT_UNTRACKED_DIRTY=0`** | Do not include untracked files in dirtiness check. Mostly useful on large repos (like WebKit). |                |
+| **`PURE_GIT_PULL`**              | Prevents Pure from checking whether the current Git remote has been updated.                   | `1`            |
+| **`PURE_GIT_UNTRACKED_DIRTY`**   | Do not include untracked files in dirtiness check. Mostly useful on large repos (like WebKit). | `1`            |
 | **`PURE_GIT_DELAY_DIRTY_CHECK`** | Time in seconds to delay git dirty checking when `git status` takes > 5 seconds.               | `1800` seconds |
 | **`PURE_PROMPT_SYMBOL`**         | Defines the prompt symbol.                                                                     | `❯`            |
 | **`PURE_PROMPT_VICMD_SYMBOL`**   | Defines the prompt symbol used when the `vicmd` keymap is active (VI-mode).                    | `❮`            |
+| **`PURE_SUSPENDED_JOBS_SYMBOL`** | Defines the symbol that indicates that jobs are running in the background.                     | `✦`            |
 | **`PURE_GIT_DOWN_ARROW`**        | Defines the git down arrow symbol.                                                             | `⇣`            |
 | **`PURE_GIT_UP_ARROW`**          | Defines the git up arrow symbol.                                                               | `⇡`            |
 | **`PURE_GIT_STASH_SYMBOL`**      | Defines the git stash symbol.                                                                  | `≡`            |
@@ -132,6 +95,10 @@ You can set Pure to only `git fetch` the upstream branch of the current local br
 
 `zstyle :prompt:pure:git:fetch only_upstream yes`
 
+`nix-shell` integration adds the shell name to the prompt when used from within a nix shell. It is enabled by default, you can disable it with:
+
+`zstyle :prompt:pure:environment:nix-shell show no`
+
 ## Colors
 
 As explained in ZSH's [manual](http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting), color values can be:
@@ -145,13 +112,14 @@ Colors can be changed by using [`zstyle`](http://zsh.sourceforge.net/Doc/Release
 - `git:stash` (cyan) - For `PURE_GIT_STASH_SYMBOL`.
 - `git:branch` (242) - The name of the current branch when in a Git repository.
 - `git:branch:cached` (red) - The name of the current branch when the data isn't fresh.
-- `git:action` (242) - The current action in progress (cherry-pick, rebase, etc.) when in a Git repository.
+- `git:action` (yellow) - The current action in progress (cherry-pick, rebase, etc.) when in a Git repository.
 - `git:dirty` (218) - The asterisk showing the branch is dirty.
 - `host` (242) - The hostname when on a remote machine.
 - `path` (blue) - The current path, for example, `PWD`.
 - `prompt:error` (red) - The `PURE_PROMPT_SYMBOL` when the previous command has *failed*.
 - `prompt:success` (magenta) - The `PURE_PROMPT_SYMBOL` when the previous command has *succeeded*.
 - `prompt:continuation` (242) - The color for showing the state of the parser in the continuation prompt (PS2). It's the pink part in [this screenshot](https://user-images.githubusercontent.com/147409/70068574-ebc74800-15f8-11ea-84c0-8b94a4b57ff4.png), it appears in the same spot as `virtualenv`. You could for example matching both colors so that Pure has a uniform look.
+- `suspended_jobs` (red) - The `PURE_SUSPENDED_JOBS_SYMBOL`.
 - `user` (242) - The username when on remote machine.
 - `user:root` (default) - The username when the user is root.
 - `virtualenv` (242) - The name of the Python `virtualenv` when in use.
@@ -248,7 +216,7 @@ zplug mafredri/zsh-async, from:github
 zplug sindresorhus/pure, use:pure.zsh, from:github, as:theme
 ```
 
-### [zinit](https://github.com/zdharma/zinit)
+### [zinit](https://github.com/zdharma-continuum/zinit)
 
 Update your `.zshrc` file with the following two lines (order matters):
 
@@ -256,6 +224,16 @@ Update your `.zshrc` file with the following two lines (order matters):
 zinit ice compile'(pure|async).zsh' pick'async.zsh' src'pure.zsh'
 zinit light sindresorhus/pure
 ```
+
+### [zi](https://wiki.zshell.dev)
+
+Update your `.zshrc` file with the following line:
+
+```sh
+zi light-mode for @sindresorhus/pure
+```
+
+See the [ZI wiki](https://wiki.zshell.dev/community/gallery/collection/themes#thp-sindresorhuspure) for more.
 
 ## FAQ
 
